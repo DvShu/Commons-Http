@@ -40,5 +40,8 @@ public class HttpTest {
 		return HttpRequest.exec(SERVER + "/queryOrder.do", nvps);
 	}
 	
-	
+	public static String searchTest() throws Exception {
+		String params = "{'oid': 'dasdfdaasdf'}";
+		return HttpRequest.exec(SERVER + "/queryOrder.do", params);
+	}
 }
