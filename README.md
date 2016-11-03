@@ -20,6 +20,24 @@ public static String searchTest() throws Exception {
 	return HttpRequest.exec(SERVER + "/queryOrder.do", params);
 }
 ```
+>3.通用HTTP请求
+>>```Java
+public static String uploadFile() throws IOException {
+	File file = new File("D:\\日志系统.txt");
+	LocaleFileBody fileBody = new LocaleFileBody(file.getName(), file.length(), new FileInputStream(file), ContentType.DEFAULT_BINARY);
+	// FileBody fileBody = new FileBody(new File("D:\\日志系统.txt"), ContentType.MULTIPART_FORM_DATA);
+	HttpEntity reqEntity = MultipartEntityBuilder.create()
+		// .addBinaryBody("file", new FileInputStream("D:\\日志系统.txt"), ContentType.MULTIPART_FORM_DATA, "日志系统")
+		.addPart("file", fileBody)
+		.addTextBody("flag", "image")
+		.build();
+	return HttpRequest.exec(FILE_SERVER + "/file/uploadFileAjax.do", reqEntity);
+}
+```
+通用的HTTP请求的方法为
+```Java
+String exec(String url, HTTPEntity entity);
+```
 
 change logs:
 ----
@@ -30,3 +48,7 @@ change logs:
 >v1.1
 >>-- 新增了一个通过POST提交字符串数据的方法
     
+>v1.2
+>>-- 更新请求库为最新的Commons-http请求包
+>>-- 新增了一个通用请求接口
+>>-- 更新了内部请求是实现为最新的 commons-http 实现
