@@ -7,30 +7,31 @@ import java.io.InputStreamReader;
 
 /**
  * @ClassName: StreamTool
- * @Description: ¸úÁ÷Ïà¹ØµÄ¹¤¾ßÀà·½·¨
+ * @Description: è·Ÿæµç›¸å…³çš„å·¥å…·ç±»æ–¹æ³•
  * @author haoran.shu
- * @date 2016-3-14 ÏÂÎç3:16:12
+ * @date 2016-3-14 ä¸‹åˆ3:16:12
  */
 public class StreamTool {
 
 	/**
 	 * @Title: getInputStream
-	 * @Description: ¶ÁÈ¡ÊäÈëÁ÷ÖĞµÄÊı¾İ
+	 * @Description: è¯»å–è¾“å…¥æµä¸­çš„æ•°æ®
 	 * @param in
 	 * @return String
 	 * @throws IOException
 	 */
 	public static String getInputStream(InputStream in) throws IOException {
-		// ½«×Ö½ÚÁ÷Ïò×Ö·ûÁ÷µÄ×ª»»¡£
-		InputStreamReader isr = new InputStreamReader(in, "UTF-8");// ¶ÁÈ¡
-		// ´´½¨×Ö·ûÁ÷»º³åÇø
-		BufferedReader bufr = new BufferedReader(isr);// »º³å
-		StringBuilder builder = new StringBuilder(); // ±£´æ¶ÁÈ¡µ½µÄÊı¾İ
-		String line; // ¶ÁÈ¡Ã¿Ò»ĞĞÊı¾İ
+		// å°†å­—èŠ‚æµå‘å­—ç¬¦æµçš„è½¬æ¢ã€‚
+		InputStreamReader isr = new InputStreamReader(in, "UTF-8");// è¯»å–
+		// åˆ›å»ºå­—ç¬¦æµç¼“å†²åŒº
+		BufferedReader bufr = new BufferedReader(isr);// ç¼“å†²
+		StringBuilder builder = new StringBuilder(); // ä¿å­˜è¯»å–åˆ°çš„æ•°æ®
+		String line; // è¯»å–æ¯ä¸€è¡Œæ•°æ®
 		while ((line = bufr.readLine()) != null) {
-			builder.append(line); // ±£´æ¶ÁÈ¡µ½µÄÃ¿Ò»ĞĞÊı¾İ
+			builder.append(line); // ä¿å­˜è¯»å–åˆ°çš„æ¯ä¸€è¡Œæ•°æ®
 		}
-		// ¹Ø±ÕÁ÷
+		// å…³é—­æµ
+		in.close();
 		isr.close();
 		bufr.close();
 		return builder.toString();
@@ -38,21 +39,21 @@ public class StreamTool {
 
 	/**
 	 * @Title: getInputStream1
-	 * @Description: ¶ÁÈ¡InputSteamÖĞµÄÊı¾İ(µÚ2ÖÖ·½·¨)
+	 * @Description: è¯»å–InputSteamä¸­çš„æ•°æ®(ç¬¬2ç§æ–¹æ³•)
 	 * @param in
 	 * @return String
 	 * @throws IOException
 	 */
 	public static String getInputStream1(InputStream in) throws IOException {
-		byte[] b = new byte[1024]; // ¹¹½¨×Ö½Ú»º´æÊı×é
-		int length = 0; // ±£´æÃ¿Ò»´Î¶ÁÈ¡µÄ×Ö½ÚÊı
+		byte[] b = new byte[1024]; // æ„å»ºå­—èŠ‚ç¼“å­˜æ•°ç»„
+		int length = 0; // ä¿å­˜æ¯ä¸€æ¬¡è¯»å–çš„å­—èŠ‚æ•°
 		StringBuilder sb = new StringBuilder();
-		// Ñ­»·¶ÁÈ¡
+		// å¾ªç¯è¯»å–
 		while ((length = in.read(b)) != -1) {
-			// ½«Ã¿Ò»´Î¶ÁÈ¡µÄ×Ö½Ú×ª»»Îª×Ö·û,±ÜÃâÂÒÂë
+			// å°†æ¯ä¸€æ¬¡è¯»å–çš„å­—èŠ‚è½¬æ¢ä¸ºå­—ç¬¦,é¿å…ä¹±ç 
 			sb.append(new String(b, 0, length, "utf-8"));
 		}
-		in.close();// ¹Ø±ÕÁ÷
+		in.close();// å…³é—­æµ
 		return sb.toString();
 	}
 }

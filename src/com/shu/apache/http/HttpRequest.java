@@ -9,25 +9,27 @@ import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.params.CoreConnectionPNames;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
 
 import com.shu.apache.http.exception.CodeErrorException;
 import com.shu.apache.http.stream.StreamTool;
 
 /**
  * @ClassName: HttpRequest
- * @Description: ·â×°µÄCommons-httpÇëÇó
+ * @Description: å°è£…çš„Commons-httpè¯·æ±‚
  * @author haoran.shu
- * @date 2016-3-14 ÏÂÎç3:23:55
+ * @date 2016-3-14 ä¸‹åˆ3:23:55
  */
 public class HttpRequest {
 
 	/**
 	 * @Title: exec
-	 * @Description: HTTPÇëÇó(post formÇëÇó)
+	 * @Description: HTTPè¯·æ±‚(post formè¯·æ±‚)
 	 * @param url
 	 * @param params
 	 * @throws ClientProtocolException
@@ -37,23 +39,18 @@ public class HttpRequest {
 	 */
 	public static String exec(String url, List<NameValuePair> params)
 			throws ClientProtocolException, IOException, CodeErrorException {
-		// ¹¹ÔìPOSTÇëÇó
+		// æ„é€ POSTè¯·æ±‚
 		HttpPost request = new HttpPost(url);
-		HttpClient client = new DefaultHttpClient(); // ¹¹ÔìÄ¬ÈÏµÄHTTPÇëÇóÖ´ĞĞ
-		// ÉèÖÃÁ¬½Ó³¬Ê±Ê±¼äÎª1·ÖÖÓ
-		client.getParams().setParameter(
-				CoreConnectionPNames.CONNECTION_TIMEOUT, 60000);
-		// ÉèÖÃ¶ÁÈ¡ÄÚÈİµÄµÈ´ıÊ±¼äÎª1·ÖÖÓ
-		client.getParams().setParameter(CoreConnectionPNames.SO_TIMEOUT, 60000);
-		request.setEntity(new UrlEncodedFormEntity(params, "UTF-8")); // ÉèÖÃÇëÇó²ÎÊı
-		HttpResponse response = client.execute(request); // Ö´ĞĞPOSTÇëÇó
-		// ÅĞ¶ÏÇëÇó·µ»ØÂë
+		HttpClient client = HttpClients.createDefault(); // æ„é€ é»˜è®¤çš„HTTPè¯·æ±‚æ‰§è¡Œ
+		request.setEntity(new UrlEncodedFormEntity(params, "UTF-8")); // è®¾ç½®è¯·æ±‚å‚æ•°
+		HttpResponse response = client.execute(request); // æ‰§è¡ŒPOSTè¯·æ±‚
+		// åˆ¤æ–­è¯·æ±‚è¿”å›ç 
 		if (response.getStatusLine().getStatusCode() == 200) {
-			HttpEntity entity = response.getEntity(); // »ñÈ¡ÇëÇóÊµÌå
-			// È¡µÄÇëÇó·µ»ØÊı¾İ
+			HttpEntity entity = response.getEntity(); // è·å–è¯·æ±‚å®ä½“
+			// å–çš„è¯·æ±‚è¿”å›æ•°æ®
 			String content = StreamTool.getInputStream1(entity.getContent());
-			request.abort(); // ¶Ï¿ªÇëÇó
-			// ·µ»Ø¶ÁÈ¡µÄÇëÇó·µ»ØÊı¾İ
+			request.abort(); // æ–­å¼€è¯·æ±‚
+			// è¿”å›è¯»å–çš„è¯·æ±‚è¿”å›æ•°æ®
 			return content;
 		} else {
 			throw new CodeErrorException(response.getStatusLine()
@@ -64,42 +61,78 @@ public class HttpRequest {
 
 	/**
 	 * @Title: httpClientPost2Str2
-	 * @Description: ·¢ËÍ×Ö·û´®¶ÔÏó(¿ÉÒÔÊÇJSON×Ö·û´®)
+	 * @Description: å‘é€å­—ç¬¦ä¸²å¯¹è±¡(å¯ä»¥æ˜¯JSONå­—ç¬¦ä¸²)
 	 * @param url
-	 *            ÇëÇóµÄURL
+	 *            è¯·æ±‚çš„URL
 	 * @param string
-	 *            ĞèÒªÉÏ´«(Ìá½»)µÄÄÚÈİ
-	 * @return String ·şÎñÆ÷·µ»ØµÄStringÀàĞÍµÄÄÚÈİ
+	 *            éœ€è¦ä¸Šä¼ (æäº¤)çš„å†…å®¹
+	 * @return String æœåŠ¡å™¨è¿”å›çš„Stringç±»å‹çš„å†…å®¹
+	 * @throws IOException 
+	 * @throws ClientProtocolException 
+	 * @throws CodeErrorException 
 	 * @throws Exception
-	 *             Òì³£
+	 *             å¼‚å¸¸
 	 */
-	public static String exec(String url, String string) throws Exception {
-		// ĞèÒªÉÏ´«µÄÄÚÈİÈç¹ûÎª¿Õ,ÖØÖÃÎª¿Õ×Ö·û´®
+	public static String exec(String url, String string) throws ClientProtocolException, 
+		IOException, CodeErrorException {
+		// éœ€è¦ä¸Šä¼ çš„å†…å®¹å¦‚æœä¸ºç©º,é‡ç½®ä¸ºç©ºå­—ç¬¦ä¸²
 		if (string == null) {
 			string = "";
 		}
-		// ¹¹ÔìHttpClientÁ¬½Ó
-		HttpClient httpClient = new DefaultHttpClient();
-		// ¹¹ÔìpostÇëÇó
+		// æ„é€ HttpClientè¿æ¥
+		HttpClient httpClient = HttpClients.createDefault();
+		// æ„é€ postè¯·æ±‚
 		HttpPost httpPost = new HttpPost(url);
-		// ¹¹½¨ÇëÇóÊµÌå
-		StringEntity entity = new StringEntity(string, "UTF-8");// ±ÜÃâÖĞÎÄÂÒÂë
-		entity.setContentEncoding("UTF-8");// ±àÂë
+		// æ„å»ºè¯·æ±‚å®ä½“
+		StringEntity entity = new StringEntity(string, "UTF-8");// é¿å…ä¸­æ–‡ä¹±ç 
+		entity.setContentEncoding("UTF-8");// ç¼–ç 
 		entity.setContentType("application/json");
-		httpPost.setEntity(entity);// ½«ÒªÉÏ´«µÄÄÚÈİ,·ÅÈëpostÇëÇóµ±ÖĞ
-		HttpResponse response = httpClient.execute(httpPost);// Ö´ĞĞpostÇëÇó
-		// ÅĞ¶ÏÇëÇó·µ»ØÂë
+		httpPost.setEntity(entity);// å°†è¦ä¸Šä¼ çš„å†…å®¹,æ”¾å…¥postè¯·æ±‚å½“ä¸­
+		HttpResponse response = httpClient.execute(httpPost);// æ‰§è¡Œpostè¯·æ±‚
+		// åˆ¤æ–­è¯·æ±‚è¿”å›ç 
 		if (response.getStatusLine().getStatusCode() == 200) {
-			HttpEntity responseEntity = response.getEntity(); // »ñÈ¡ÇëÇóÊµÌå
-			// È¡µÄÇëÇó·µ»ØÊı¾İ
+			HttpEntity responseEntity = response.getEntity(); // è·å–è¯·æ±‚å®ä½“
+			// å–çš„è¯·æ±‚è¿”å›æ•°æ®
 			String content = StreamTool.getInputStream1(responseEntity.getContent());
-			httpPost.abort(); // ¶Ï¿ªÇëÇó
-			// ·µ»Ø¶ÁÈ¡µÄÇëÇó·µ»ØÊı¾İ
+			httpPost.abort(); // æ–­å¼€è¯·æ±‚
+			// è¿”å›è¯»å–çš„è¯·æ±‚è¿”å›æ•°æ®
 			return content;
 		} else {
 			throw new CodeErrorException(response.getStatusLine()
 					.getStatusCode(), response.getStatusLine()
 					.getReasonPhrase());
 		}
+	}
+	
+	/**
+	 * æ‰§è¡ŒHTTP POSTè¯·æ±‚(ClientMultipartFormPost),é€šç”¨è¯·æ±‚æ¥å£
+	 * HttpEntity reqEntity = MultipartEntityBuilder.create()
+                    .addPart("bin", bin)
+                    .addPart("comment", comment)
+                    .build();
+	 * @param url			è¯·æ±‚åœ°å€URI
+	 * @param reqEntity		è¯·æ±‚å†…å®¹
+	 * @return è¯·æ±‚å“åº”è¿”å›ç»“æœ
+	 * @throws ClientProtocolException
+	 * @throws IOException
+	 * @throws CodeErrorException
+	 */
+	public static String exec(String url, HttpEntity reqEntity) throws IOException {
+		String result = "success";
+		// æ„é€ HttpClientè¿æ¥
+		CloseableHttpClient httpClient = HttpClients.createDefault();
+		HttpPost httpPost = new HttpPost(url); // postè¯·æ±‚
+		httpPost.setEntity(reqEntity); // è®¾ç½®è¯·æ±‚å†…å®¹
+		CloseableHttpResponse response = null;
+		try {
+			response = httpClient.execute(httpPost); // æ‰§è¡Œè¯·æ±‚
+			HttpEntity resEntity = response.getEntity(); // è·å–è¿”å›å†…å®¹
+			result = EntityUtils.toString(resEntity, "UTF-8");
+		} finally {
+			// å…³é—­è¯·æ±‚
+			response.close();
+			httpClient.close();
+		}
+		return result;
 	}
 }

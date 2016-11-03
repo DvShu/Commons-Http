@@ -1,9 +1,9 @@
 package com.shu.apache.http.exception;
 /**
  * @ClassName: CodeErrorException 
- * @Description: 执行HTTP请求,当返回码不是200-OK时抛出的异常
+ * @Description: 鎵цHTTP璇锋眰,褰撹繑鍥炵爜涓嶆槸200-OK鏃舵姏鍑虹殑寮傚父
  * @author haoran.shu
- * @date 2016-3-14 上午10:46:27
+ * @date 2016-3-14 涓婂崍10:46:27
  */
 public class CodeErrorException extends Exception {
 
