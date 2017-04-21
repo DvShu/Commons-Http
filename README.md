@@ -4,7 +4,8 @@
 使用：
 ----
 >1.提交post form数据:
->>```Java
+>>
+```Java
 public static String searchOrder() throws ClientProtocolException, IOException, CodeErrorException{
 	// 构建请求参数
 	List<NameValuePair> nvps = new ArrayList<>();
@@ -14,14 +15,16 @@ public static String searchOrder() throws ClientProtocolException, IOException, 
 }
 ```
 >2.JSON请求
->>```Java
+>>
+```Java
 public static String searchTest() throws Exception {
 	String params = "{'oid': 'dasdfdaasdf'}";
 	return HttpRequest.exec(SERVER + "/queryOrder.do", params);
 }
 ```
 >3.通用HTTP请求
->>```Java
+>>
+```Java
 public static String uploadFile() throws IOException {
 	File file = new File("D:\\日志系统.txt");
 	LocaleFileBody fileBody = new LocaleFileBody(file.getName(), file.length(), new FileInputStream(file), ContentType.DEFAULT_BINARY);
